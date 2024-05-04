@@ -3,7 +3,7 @@
 ## Overview
 The Shinobi Naruto Insights leverages advanced data science techniques to analyze and visualize the rich lore of the Naruto anime series. This project encapsulates several aspects including web scraping for data acquisition, network analysis of character relationships, natural language processing for theme extraction, and machine learning for classifying ninja techniques.
 
-!(Alt here)['https://github.com/WenfongWW/Portfolio_Project/blob/2606461bc6bc8d5e07757b60feaa067ec173dd86/Deep%20Learning/Shinobi%20Naruto%20Insights%20-NLP/images/naruto-izleme-sirasi.jpg']
+!(Alt text)[https://github.com/WenfongWW/Portfolio_Project/blob/2606461bc6bc8d5e07757b60feaa067ec173dd86/Deep%20Learning/Shinobi%20Naruto%20Insights%20-NLP/images/naruto-izleme-sirasi.jpg]
 
 ## Project Structure
 The project is divided into four main modules, each responsible for a different aspect of data analysis:
