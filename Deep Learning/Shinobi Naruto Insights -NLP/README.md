@@ -1,7 +1,7 @@
-# Shinobi Naruto Insignts 
+# Shinobi Naruto Insights 
 
 ## Overview
-The Naruto Data Science Project leverages advanced data science techniques to analyze and visualize the rich lore of the Naruto anime series. This project encapsulates several aspects including web scraping for data acquisition, network analysis of character relationships, natural language processing for theme extraction, and machine learning for classifying ninja techniques.
+The Shinobi Naruto Insights leverages advanced data science techniques to analyze and visualize the rich lore of the Naruto anime series. This project encapsulates several aspects including web scraping for data acquisition, network analysis of character relationships, natural language processing for theme extraction, and machine learning for classifying ninja techniques.
 
 ## Project Structure
 The project is divided into four main modules, each responsible for a different aspect of data analysis:
