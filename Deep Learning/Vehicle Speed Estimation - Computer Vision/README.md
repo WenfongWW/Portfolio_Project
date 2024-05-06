@@ -18,6 +18,7 @@ This project implements a vehicle speed estimation system using computer vision 
 - Python 3.8 or later
 - OpenCV
 - NumPy
+- Supervision
 - PyTorch (ensure you have the appropriate version installed for either CPU or GPU support)
 
 ## Usage
