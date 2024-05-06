@@ -18,5 +18,5 @@ This project implements a vehicle speed estimation system using computer vision 
 - PyTorch (ensure you have the appropriate version installed for either CPU or GPU support)
 
 ## Usage
-** Running the system**
+**Running the system**
 ```python main.py --source_video_path "path_to_your_video.mp4"```
