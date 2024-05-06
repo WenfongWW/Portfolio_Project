@@ -7,8 +7,11 @@ This project implements a vehicle speed estimation system using computer vision 
 
 ## Features
 **Real-time Vehicle Detection**: Utilizes YOLOv8 from Roboflow for robust vehicle detection.
+
 **Speed Estimation**: Calculates the speed of each vehicle based on tracking data over time.
+
 **Occlusion Handling**: Maintains vehicle identity even in cases of partial occlusion.
+
 **Enhanced Tracking**: Implements ByteTrack for improved multi-object tracking performance.
 
 ## Installation
