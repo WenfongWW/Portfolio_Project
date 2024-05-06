@@ -6,13 +6,10 @@ This project implements a vehicle speed estimation system using computer vision 
 ![Alt text](https://github.com/WenfongWW/Portfolio_Project/blob/75afb95bd0170d554f673d09d5100e5800654060/Deep%20Learning/Vehicle%20Speed%20Estimation%20-%20Computer%20Vision/images/tracking_vehicle.png)
 
 ## Features
-**Real-time Vehicle Detection**: Utilizes YOLOv8 from Roboflow for robust vehicle detection.
-
-**Speed Estimation**: Calculates the speed of each vehicle based on tracking data over time.
-
-**Occlusion Handling**: Maintains vehicle identity even in cases of partial occlusion.
-
-**Enhanced Tracking**: Implements ByteTrack for improved multi-object tracking performance.
+- **Real-time Vehicle Detection**: Utilizes YOLOv8 from Roboflow for robust vehicle detection.
+- **Speed Estimation**: Calculates the speed of each vehicle based on tracking data over time.
+- **Occlusion Handling**: Maintains vehicle identity even in cases of partial occlusion.
+- **Enhanced Tracking**: Implements ByteTrack for improved multi-object tracking performance.
 
 ## Installation
 - Python 3.8 or later
