@@ -56,14 +56,14 @@ def train_xgboost(data):
     xgb_model = xgb.XGBRegressor()
     xgb_model.fit(X_train, y_train)
     
-    return xgb_model, scaler, X
+    return xgb_model, scaler, X.columns
 
 # Load data and preprocess
 data = load_data()
 data = preprocess_data(data)
 
 # Train model
-xgb_model, scaler, X = train_xgboost(data)
+xgb_model, scaler, feature_columns = train_xgboost(data)
 
 # Streamlit app
 st.title("DoorDash Delivery Time Prediction")
@@ -75,7 +75,7 @@ st.write(data.head())
 
 # Model Training and Evaluation
 st.header("Model Training and Evaluation")
-X_train, X_test, y_train, y_test = train_test_split(X, data['log_total_delivery_duration'], test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(data.drop(columns=['log_total_delivery_duration']), data['log_total_delivery_duration'], test_size=0.2, random_state=42)
 y_pred_train = xgb_model.predict(X_train)
 y_pred_test = xgb_model.predict(X_test)
 
@@ -121,7 +121,7 @@ input_df['log_avg_item_price'] = np.log1p(input_df['avg_item_price'])
 input_df = pd.get_dummies(input_df, columns=['store_primary_category', 'order_protocol', 'market_id'], drop_first=True)
 
 # Align the input data columns with the training data
-input_df = input_df.reindex(columns=X.columns, fill_value=0)
+input_df = input_df.reindex(columns=feature_columns, fill_value=0)
 
 # Scale input data
 input_scaled = scaler.transform(input_df)
