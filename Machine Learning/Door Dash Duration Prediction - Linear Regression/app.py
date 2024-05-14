@@ -68,8 +68,10 @@ def train_xgboost(data):
 # Load data and preprocess
 data = load_data()
 
-# Keep a copy of the original columns for input data handling
-original_columns = data.columns.tolist()
+# Preserve the original categorical columns
+store_primary_category_options = data['store_primary_category'].unique()
+order_protocol_options = data['order_protocol'].unique()
+market_id_options = data['market_id'].unique()
 
 data = preprocess_data(data)
 
@@ -106,12 +108,6 @@ st.pyplot(fig)
 
 # Prediction Interface
 st.header("Predict Delivery Time")
-
-# Use the original columns for input data handling
-store_primary_category_options = data['store_primary_category'].unique()
-order_protocol_options = data['order_protocol'].unique()
-market_id_options = data['market_id'].unique()
-
 input_data = {
     'total_items': st.number_input('Total Items', min_value=1, max_value=100, value=5),
     'subtotal': st.number_input('Subtotal', min_value=1, max_value=10000, value=5000),
