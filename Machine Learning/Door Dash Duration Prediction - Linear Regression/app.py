@@ -28,10 +28,17 @@ def preprocess_data(data):
     data['log_avg_item_price'] = np.log1p(data['avg_item_price'])
     data['log_total_delivery_duration'] = np.log1p(data['total_delivery_duration'])
     
-    # Handle missing values and outliers
-    data.fillna(data.median(), inplace=True)
+    # Handle missing values for numeric columns
+    numeric_cols = data.select_dtypes(include=[np.number]).columns
+    data[numeric_cols] = data[numeric_cols].fillna(data[numeric_cols].median())
+    
+    # Handle missing values for categorical columns
+    categorical_cols = data.select_dtypes(include=['object']).columns
+    data[categorical_cols] = data[categorical_cols].fillna('missing')
+    
+    # Handle outliers
     max_value_threshold = 1e10
-    for column in data.columns:
+    for column in numeric_cols:
         data[column] = np.clip(data[column], None, max_value_threshold)
     
     # One-hot encode categorical features
@@ -60,6 +67,10 @@ def train_xgboost(data):
 
 # Load data and preprocess
 data = load_data()
+
+# Keep a copy of the original columns for input data handling
+original_columns = data.columns.tolist()
+
 data = preprocess_data(data)
 
 # Train model
@@ -95,6 +106,12 @@ st.pyplot(fig)
 
 # Prediction Interface
 st.header("Predict Delivery Time")
+
+# Use the original columns for input data handling
+store_primary_category_options = data['store_primary_category'].unique()
+order_protocol_options = data['order_protocol'].unique()
+market_id_options = data['market_id'].unique()
+
 input_data = {
     'total_items': st.number_input('Total Items', min_value=1, max_value=100, value=5),
     'subtotal': st.number_input('Subtotal', min_value=1, max_value=10000, value=5000),
@@ -103,9 +120,9 @@ input_data = {
     'total_outstanding_orders': st.number_input('Total Outstanding Orders', min_value=0, max_value=100, value=10),
     'estimated_order_place_duration': st.number_input('Estimated Order Place Duration', min_value=0, max_value=3600, value=300),
     'estimated_store_to_consumer_driving_duration': st.number_input('Estimated Store to Consumer Driving Duration', min_value=0, max_value=3600, value=600),
-    'store_primary_category': st.selectbox('Store Primary Category', options=data['store_primary_category'].unique()),
-    'order_protocol': st.selectbox('Order Protocol', options=data['order_protocol'].unique()),
-    'market_id': st.selectbox('Market ID', options=data['market_id'].unique())
+    'store_primary_category': st.selectbox('Store Primary Category', options=store_primary_category_options),
+    'order_protocol': st.selectbox('Order Protocol', options=order_protocol_options),
+    'market_id': st.selectbox('Market ID', options=market_id_options)
 }
 
 input_df = pd.DataFrame([input_data])
