@@ -20,6 +20,7 @@ SELECT
     SUM(CASE WHEN neighborhood_overview IS NULL THEN 1 ELSE 0 END) AS neighborhood_overview_missing,
 	SUM(CASE WHEN host_about IS  NULL THEN 1 ELSE 0 END) AS host_about_missing,
 	SUM(CASE WHEN host_neighbourhood IS NULL THEN 1 ELSE 0 END) AS host_neighbourhood_missing,
+	SUM(CASE WHEN availability_30 IS NULL THEN 1 ELSE 0 END) AS availabilty_30_missing,
 	SUM(CASE WHEN price IS NULL THEN 1 ELSE 0 END) AS price_missing
 FROM [airbnb].[dbo].[listings]
 
@@ -57,14 +58,42 @@ SELECT id, COUNT(*) AS count FROM [airbnb].[dbo].[listings]
 GROUP BY id
 HAVING COUNT(*) > 1
 
+-- 2.Data Exploration 
 
--- Main Questions 
+-- Looking how many number for each room type 
+SELECT room_type, COUNT(room_type) as Count_room_type FROM [airbnb].[dbo].[listings]
+GROUP BY room_type
+ORDER BY Count_room_type DESC
+
+-- Calculate average nights booked 
+SELECT AVG(365 - availability_365) AS avg_nights_booked FROM [airbnb].[dbo].[listings];
+
+-- Calculate average price per night 
+SELECT AVG(price) AS avg_price_per_nigh FROM [airbnb].[dbo].[listings];
+
+-- 
+
+
+
+
+
+
+-- 3. Main Questions 
 SELECT * FROM [airbnb].[dbo].[listings]
 
 -- What is the optimal price range for listings in different neighborhoods to maximize occupancy rates?
-SELECT neighbourhood_cleansed, price FROM [airbnb].[dbo].[listings]
+SELECT neighbourhood_cleansed, price, AVG((30.0- availability_30) / 30.0 * 100) AS avg_occupancy_rate FROM [airbnb].[dbo].[listings]
+GROUP BY neighbourhood_cleansed, price
+ORDER BY neighbourhood_cleansed, price
 
 -- 
+SELECT 
+    price,
+    AVG((30.0 - availability_30) / 30.0 * 100) AS avg_occupancy_rate,
+    AVG(price * (30.0 - availability_30) / 30.0 * 100) AS avg_revenue
+FROM [airbnb].[dbo].[listings]
+GROUP BY price
+ORDER BY price;
 
 
 
