@@ -20,7 +20,6 @@ SELECT
     SUM(CASE WHEN neighborhood_overview IS NULL THEN 1 ELSE 0 END) AS neighborhood_overview_missing,
 	SUM(CASE WHEN host_about IS  NULL THEN 1 ELSE 0 END) AS host_about_missing,
 	SUM(CASE WHEN host_neighbourhood IS NULL THEN 1 ELSE 0 END) AS host_neighbourhood_missing,
-    SUM(CASE WHEN reviews_per_month IS NULL THEN 1 ELSE 0 END) AS reviews_per_month_missing,
 	SUM(CASE WHEN price IS NULL THEN 1 ELSE 0 END) AS price_missing
 FROM [airbnb].[dbo].[listings]
 
@@ -30,9 +29,42 @@ SET description = 'No Description'
 WHERE description IS NULL
 
 UPDATE [airbnb].[dbo].[listings]
-SET 
+SET neighborhood_overview = 'No overview provided'
+WHERE neighborhood_overview IS NULL 
+
+UPDATE [airbnb].[dbo].[listings]
+SET host_about = 'No host information'
+WHERE host_about IS NULL 
+
+UPDATE [airbnb].[dbo].[listings]
+SET host_neighbourhood = 'No host neighbourhood information'
+WHERE host_neighbourhood IS NULL 
+
+UPDATE [airbnb].[dbo].[listings]
+SET price = (SELECT AVG(price) FROM [airbnb].[dbo].listings)
+WHERE price IS NULL
 
 
+-- Check for Duplicates
+;WITH CTE AS (
+	SELECT id, ROW_NUMBER() OVER (PARTITION BY id ORDER BY id) AS row_num
+	FROM [airbnb].[dbo].[listings]
+)
+DELETE FROM CTE
+WHERE row_num > 1;
+
+SELECT id, COUNT(*) AS count FROM [airbnb].[dbo].[listings]
+GROUP BY id
+HAVING COUNT(*) > 1
+
+
+-- Main Questions 
+SELECT * FROM [airbnb].[dbo].[listings]
+
+-- What is the optimal price range for listings in different neighborhoods to maximize occupancy rates?
+SELECT neighbourhood_cleansed, price FROM [airbnb].[dbo].[listings]
+
+-- 
 
 
 
