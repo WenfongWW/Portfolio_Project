@@ -179,4 +179,8 @@ FROM [airbnb].[dbo].[listings]
 
 -- Which amenities contribute most to higher occupancy and income?
 SELECT amenities, 
-	   AVG(
+	   AVG((30.0 - availability_30) / 30.0 * 100) AS avg_occupancy_rate,
+	   AVG(price * (365 - availability_365)) AS avg_income 
+FROM [airbnb].[dbo].[listings]
+GROUP BY amenities
+ORDER BY avg_income DESC
