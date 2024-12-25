@@ -30,7 +30,7 @@ The analysis highlights significant trends in the Airbnb market, showcasing oppo
 
 - Hollywood has the highest average price ($1,097.43) with strong reviews (4.66), reflecting its popularity among premium travelers.
 - Lighthouse Point and Tribal Land combine moderate prices with the highest review scores (4.88), offering excellent value.
-- 
+
 ## **Key Takeaways**
 - **Luxury Opportunities**: Neighborhoods like Hollywood and Pembroke Pines dominate the premium market, offering high revenue potential for luxury accommodations.
 - **Affordable Options**: Areas like West Park and Pembroke Park attract budget-conscious travelers, particularly for smaller group accommodations.
