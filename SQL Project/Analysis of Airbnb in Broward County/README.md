@@ -7,7 +7,7 @@ The objective of this project is to analyze data for Airbnb listings to derive a
 Airbnb Insights Summary
 The analysis highlights significant trends in the Airbnb market, showcasing opportunities across various segments:
 
-1. Room Types and Properties:
+1.  Room Types and Properties:
 
 - Entire homes/apartments dominate the market with 13,286 listings, followed by private rooms (2,080). Shared rooms (68) and hotel rooms (100) are less common.
 - Popular property types include entire rental units (4,790) and entire homes (4,515), while condos and villas cater to niche travelers.
