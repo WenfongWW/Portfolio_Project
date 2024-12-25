@@ -4,10 +4,9 @@
 The objective of this project is to analyze data for Airbnb listings to derive actionable insights on revenue optimization and improving guest experiences, coupled with the discovery of market trends. The key tasks will include data cleaning: dropping irrelevant columns, and then handling missing values, along with duplicates. The analysis includes price trends, income estimation, neighborhood rankings by average price, review score, and occupancy rates. The host's performance and guest preferences are analyzed to identify key success drivers, such as the common amenities of highly rated properties. The results give data-driven recommendations for pricing strategies, property improvements, and targeted marketing that will contribute to making informed decisions.
 
 ## Insights on Airbnb Listings
-Airbnb Insights Summary
 The analysis highlights significant trends in the Airbnb market, showcasing opportunities across various segments:
 
-1.  Room Types and Properties:
+### **Room Types and Properties**
 
 - Entire homes/apartments dominate the market with 13,286 listings, followed by private rooms (2,080). Shared rooms (68) and hotel rooms (100) are less common.
 - Popular property types include entire rental units (4,790) and entire homes (4,515), while condos and villas cater to niche travelers.
