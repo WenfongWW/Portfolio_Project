@@ -11,7 +11,7 @@ The analysis highlights significant trends in the Airbnb market, showcasing oppo
 - Entire homes/apartments dominate the market with 13,286 listings, followed by private rooms (2,080). Shared rooms (68) and hotel rooms (100) are less common.
 - Popular property types include entire rental units (4,790) and entire homes (4,515), while condos and villas cater to niche travelers.
 
-### **Guest Behavior*** 
+### **Guest Behavior**
 
 - Guests stay for an average of 13.4 nights, with a high average nightly price of $477.35, indicating a focus on premium accommodations.
 - Listings generate an average income of $3,171.12 per month, highlighting strong revenue potential for hosts.
