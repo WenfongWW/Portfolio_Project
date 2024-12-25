@@ -59,29 +59,53 @@ GROUP BY id
 HAVING COUNT(*) > 1
 
 
+-- How many accomdation with 0?
+SELECT COUNT(accommodates) AS Count_accommodates
+FROM [airbnb].dbo.listings
+WHERE accommodates = 0 
 
+-- How many price with 0?
+SELECT COUNT(price) AS Count_price
+FROM [airbnb].dbo.listings
+WHERE price = 0 
 
--- 2.Data Exploration 
 
 -- Looking how many number for each room type 
-SELECT room_type, COUNT(room_type) as Count_room_type FROM [airbnb].[dbo].[listings]
+SELECT room_type, COUNT(room_type) AS Count_room_type 
+FROM [airbnb].[dbo].[listings]
 GROUP BY room_type
 ORDER BY Count_room_type DESC
 
+--  How many number for each property type?
+SELECT property_type, COUNT(property_type) AS Count_property_type 
+FROM [airbnb].[dbo].[listings]
+GROUP BY property_type
+ORDER BY Count_property_type DESC
+
 -- Calculate average nights booked 
-SELECT AVG(365 - availability_365) AS avg_nights_booked FROM [airbnb].[dbo].[listings]
+SELECT AVG(30 - availability_30) AS avg_nights_booked 
+FROM [airbnb].[dbo].[listings]
 
 -- Calculate average price per night 
-SELECT AVG(price) AS avg_price_per_night FROM [airbnb].[dbo].[listings]
+SELECT AVG(price) AS avg_price_per_night 
+FROM [airbnb].[dbo].[listings]
 
 -- Calculate average income 
-SELECT AVG(price * (365 - availability_365)) AS avg_income FROM [airbnb].[dbo].[listings]
+SELECT AVG(price * (30 - availability_30)) AS avg_income 
+FROM [airbnb].[dbo].[listings]
 
--- Price Ranges by Room types and Neighborhood 
-SELECT room_type, neighbourhood_cleansed, AVG(price) AS avg_price, AVG((30.0 - availability_30) / 30.0 * 100) AS avg_occupancy_rate
+-- Most expensive average price ranges by Room types and Neighborhood 
+SELECT top 5 room_type, neighbourhood_cleansed, AVG(price) AS avg_price
 FROM [airbnb].dbo.listings
 GROUP BY room_type, neighbourhood_cleansed
-ORDER BY avg_price DESC, avg_occupancy_rate DESC
+ORDER BY avg_price DESC
+
+-- Least expensive average price ranges by Room and Neighborhood
+SELECT top 5 room_type, neighbourhood_cleansed, AVG(price) AS avg_price
+FROM [airbnb].dbo.listings
+GROUP BY room_type, neighbourhood_cleansed
+ORDER BY avg_price ASC
+
 
 -- Occupancy Rate by Neighborhood 
 -- Hightlight neighbourhood_cleansed with the highest and lowest occupancy rates. This will help understand demand across locations. 
@@ -91,15 +115,89 @@ GROUP BY neighbourhood_cleansed
 ORDER BY avg_occupancy_rate DESC
 
 
+-- Calculate the highest expensive mean price for each neighborhood and accommodates group
+WITH MeanPrice AS (
+	SELECT 
+	neighbourhood_cleansed AS neighbourhood,
+	accommodates,
+	AVG(price) AS avg_price
+	FROM [airbnb].dbo.listings
+	GROUP BY neighbourhood_cleansed, accommodates
+),
+
+Most_Expensives_neighborhood AS (
+	SELECT neighbourhood,
+	accommodates,
+	avg_price,
+	ROW_NUMBER() OVER (PARTITION BY accommodates ORDER BY avg_price DESC) AS rank_row
+	FROM MeanPrice
+)
+
+SELECT * 
+FROM Most_Expensives_neighborhood
+WHERE rank_row = 1
+ORDER BY accommodates
+
+-- Calculate the lowest expensive mean price for each neighborhood and accommodates group
+WITH MeanPrice AS (
+	SELECT 
+	neighbourhood_cleansed AS neighbourhood,
+	accommodates,
+	AVG(price) AS avg_price
+	FROM [airbnb].dbo.listings
+	GROUP BY neighbourhood_cleansed, accommodates
+),
+
+Lowest_Expensives_neighborhood AS (
+	SELECT neighbourhood,
+	accommodates,
+	avg_price,
+	ROW_NUMBER() OVER (PARTITION BY accommodates ORDER BY avg_price ASC) AS rank_row
+	FROM MeanPrice
+)
+
+SELECT * 
+FROM Lowest_Expensives_neighborhood
+WHERE rank_row = 1
+ORDER BY accommodates
+
+
+-- Top neighborhood based on average price and average reviews 
+SELECT 
+    neighbourhood_cleansed AS Neighborhood,
+    ROUND(AVG(CAST(REPLACE(price, '$', '') AS FLOAT)), 2) AS Average_Price,
+    ROUND(AVG(review_scores_rating), 2) AS Average_Reviews
+FROM [airbnb].[dbo].[listings]
+WHERE price IS NOT NULL AND reviews_per_month IS NOT NULL
+GROUP BY neighbourhood_cleansed
+ORDER BY Average_Price DESC, Average_Reviews DESC
+
+-- What are the most common types of amenities that highly-rated properties offer?
+WITH ParsedAmenities AS (
+    SELECT
+        l.id AS listing_id,
+        l.review_scores_rating,
+        TRIM(value) AS amenity
+    FROM [airbnb].[dbo].[listings] AS l
+    CROSS APPLY STRING_SPLIT(l.amenities, ',') AS s
+    WHERE l.review_scores_rating > 4.5
+)
+SELECT amenity, COUNT(*) AS occurrence
+FROM ParsedAmenities
+GROUP BY amenity
+ORDER BY occurrence DESC
+
 -- Host performance analysis
 SELECT 
     host_id, 
+	room_type,
     COUNT(id) AS total_listings, 
     AVG(review_scores_rating) AS avg_review_score,
-    AVG(price * (365 - availability_365)) AS avg_host_income
+    AVG(price * (30 - availability_30)) AS avg_host_income,
+	AVG(minimum_nights) AS avg_minimum_nights
 FROM [airbnb].[dbo].[listings]
-GROUP BY host_id
-ORDER BY avg_host_income DESC
+GROUP BY host_id, room_type
+ORDER BY total_listings DESC
 
 
 -- Revenue maximization by price range
@@ -112,7 +210,7 @@ WITH price_brackets AS (
             ELSE 'High' 
         END AS price_range, 
         price, 
-        AVG(price * (365 - availability_365)) AS avg_income
+        AVG(price * (30 - availability_30)) AS avg_income
     FROM [airbnb].[dbo].[listings]
     GROUP BY id, price
 )
@@ -126,61 +224,9 @@ ORDER BY avg_income_per_bracket DESC
 -- Top performers by neighborhood
 SELECT 
     neighbourhood_cleansed, 
-    AVG(CAST(price AS FLOAT) * (365 - availability_365)) AS avg_income, 
+    AVG(CAST(price AS FLOAT) * (30 - availability_30)) AS avg_income, 
     AVG(CAST(review_scores_rating AS FLOAT)) AS avg_review_score
 FROM [airbnb].[dbo].[listings]
 GROUP BY neighbourhood_cleansed
 ORDER BY avg_income DESC, avg_review_score DESC
 
-
-
-
--- 3. Main Questions 
-SELECT * FROM [airbnb].[dbo].[listings]
-
--- What is the optimal price range for listings in different neighborhoods to maximize occupancy rates?
-SELECT neighbourhood_cleansed, price, AVG((30.0- availability_30) / 30.0 * 100) AS avg_occupancy_rate FROM [airbnb].[dbo].[listings]
-GROUP BY neighbourhood_cleansed, price
-ORDER BY price DESC
-
--- Are longer minimum stays more or less successful than short-term stays in terms of occupancy and revenue?
-SELECT minimum_nights, 
-	   AVG((30 - availability_30) / 30 * 100) AS avg_occupancy_rate, 
-	   AVG(price * (30 - availability_30)) AS avg_income
-FROM [airbnb].[dbo].[listings]
-GROUP BY minimum_nights 
-ORDER BY minimum_nights ASC
-
--- Which property types (apartment, house, etc.) are the most popular in terms of occupancy rate and revenue?
-SELECT 
-    property_type, 
-    AVG((30.0 - availability_30) / 30.0 * 100) AS avg_occupancy_rate,
-    AVG(price * (30 - availability_30)) AS avg_income
-FROM [airbnb].[dbo].[listings]
-GROUP BY property_type
-ORDER BY avg_income DESC
-
-
--- How can you dynamically adjust prices to maximize both occupancy and revenue?
--- Adjusting prices based on current demand 
--- If availability_30 is low (high demand), increase the price to capitalize on demand. 
--- If availability_30 is high (low demand), decrease the price to capitalize on demand.
-SELECT 
-    id, 
-    price, 
-    availability_30, 
-    CASE 
-        WHEN (30 - availability_30) / 30.0 * 100 > 80 THEN price * 1.20 -- Increase price by 20% for high demand
-        WHEN (30 - availability_30) / 30.0 * 100 < 40 THEN price * 0.80 -- Reduce price by 20% for low demand
-        ELSE price 
-    END AS dynamic_price
-FROM [airbnb].[dbo].[listings]
-
-
--- Which amenities contribute most to higher occupancy and income?
-SELECT amenities, 
-	   AVG((30.0 - availability_30) / 30.0 * 100) AS avg_occupancy_rate,
-	   AVG(price * (365 - availability_365)) AS avg_income 
-FROM [airbnb].[dbo].[listings]
-GROUP BY amenities
-ORDER BY avg_income DESC
